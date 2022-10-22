@@ -11,7 +11,9 @@ static bool test(int maxn, int maxk)
 {
 	for (int n = 0; n <= maxn; n++)
 	{
-		if (fastbinomial(n, 1) != n)
+		uint64_t result;
+		bool overflow = fastbinomial(n, 1, result);
+		if ((result != n) && !overflow)
 		{
 			printf("problem with k = 1\n");
 			return false;
@@ -22,7 +24,12 @@ static bool test(int maxn, int maxk)
 	{
 		for (int n = k; n <= maxn; n++)
 		{
-			if (fastbinomial(n, k) != fastbinomial(n - 1, k) + fastbinomial(n - 1, k - 1))
+			uint64_t result1, result2, result3;
+			bool overflow =
+				fastbinomial(n, k, result1) |
+				fastbinomial(n - 1, k, result2) |
+				fastbinomial(n - 1, k - 1, result3);
+			if ((result1 != result2 + result3) && !overflow)
 			{
 				printf("problem with Pascal's rule at k = %d n = %d\n", k, n);
 				return false;

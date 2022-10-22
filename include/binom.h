@@ -1,7 +1,7 @@
 #ifndef BINOM_H
 #define BINOM_H
 
-#include <climits>
+#include <limits>
 #include <stdint.h>
 
 namespace binom {
@@ -84,48 +84,46 @@ constexpr const fastdiv_t precomputed[] =
 
 constexpr const int safen[] =
 {
-	0,   INT_MAX, 2642246, 77936, 10206, 2762, 1122, 585, 359, 247,
-	184, 146,     121,     104,   92,    83,   77,   72,  68,  65,
-	63,  61,      59,      58,    58,    57,   57,   56,  56,  56,
-	56,  56,      57,      57,    57,    58,   58,   58,  59,  59,
-	60,  61,      61,      62,    62,    62,   62,   62,  62,  62,
-	62,  62,      62,      62,    62,    62,   62,   62,  62,  62,
-	62,  62,      62,      62,    62
+	0,   std::numeric_limits<int>::max(), 2642246, 77936, 10206, 2762, 1122, 585, 359, 247,
+	184, 146,                             121,     104,   92,    83,   77,   72,  68,  65,
+	63,  61,                              59,      58,    58,    57,   57,   56,  56,  56,
+	56,  56,                              57,      57,    57,    58,   58,   58,  59,  59,
+	60,  61,                              61,      62,    62,    62,   62,   62,  62,  62,
+	62,  62,                              62,      62,    62,    62,   62,   62,  62,  62,
+	62,  62,                              62,      62,    62
 };
 
 } // namespace detail
 
 // correct for n <= 100, k <= 10
-inline uint64_t fastbinomial(int n, int k)
+inline bool fastbinomial(int n, int k, uint64_t& result)
 {
-	// TODO
-	// we should validate the values of n and k, obviously
-	//  if( (k <= 0) || (n <= 0)) {
-	//      bail out
-	//
-	//  }
-	//  if( k > 64) {
-	//      bail out
-	//  }
-	//  if (n > safen[k]) {
-	//      bail out
-	//  }
+	result = std::numeric_limits<uint64_t>::max();
+
+	if ((k <= 0) || (n <= 0))
+		return true;
+
+	if (k > 64)
+		return true;
+
+	if (n > detail::safen[k])
+		return true;
 
 	uint64_t np = n - k;
-	uint64_t answer = np + 1;
+	result = np + 1;
 	for (uint64_t z = 2; z <= (uint64_t)k; z++)
 	{
-		answer =
-			answer *
+		result =
+			result *
 			(np + z); // this could overflow! but it won't for our
 				  // range of values for n and k: require that n <= safen[k]
 
 		auto f = detail::precomputed[z];
-		answer >>= f.shift;
-		answer *= f.inverse;
+		result >>= f.shift;
+		result *= f.inverse;
 	}
 
-	return answer;
+	return false;
 }
 
 } // namespace binom
