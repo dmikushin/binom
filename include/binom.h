@@ -97,8 +97,8 @@ constexpr const int safen[] =
 
 // correct for n <= 100, k <= 10
 template<
-	int n,
-	int k
+	uint32_t n,
+	uint32_t k
 >
 inline bool fastbinomial(uint64_t& result)
 {
@@ -152,7 +152,7 @@ inline bool fastbinomial(uint64_t& result)
 }
 
 // correct for n <= 100, k <= 10
-inline bool fastbinomial(int n, int k, uint64_t& result)
+inline bool fastbinomial(uint32_t n, uint32_t k, uint64_t& result)
 {
 	if (0 == k || n == k)
 	{
