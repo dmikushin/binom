@@ -14,6 +14,9 @@ struct fastdiv_t
 	uint64_t inverse;
 };
 
+#if defined(__CUDA_ARCH__) || defined(__HIP_ARCH__)
+__constant__
+#endif
 constexpr const fastdiv_t precomputed[] =
 {
 	{ 0, 0 },
@@ -82,6 +85,9 @@ constexpr const fastdiv_t precomputed[] =
 	{ 0, 0xefbefbefbefbefbf },
 };
 
+#if defined(__CUDA_ARCH__) || defined(__HIP_ARCH__)
+__constant__
+#endif
 constexpr const int safen[] =
 {
 	0,   std::numeric_limits<int>::max(), 2642246, 77936, 10206, 2762, 1122, 585, 359, 247,
@@ -100,6 +106,9 @@ template<
 	uint32_t n,
 	uint32_t k
 >
+#if defined(__CUDACC__) || defined(__HIPCC__)
+__host__ __device__
+#endif
 inline bool fastbinomial(uint64_t& result)
 {
 	if (0 == k || n == k)
@@ -132,7 +141,8 @@ inline bool fastbinomial(uint64_t& result)
 		return true;
 
 	// Make k as small as possible.
-	if (k > n / 2) k = n - k;
+	if constexpr(k > n / 2)
+		return fastbinomial<n, n - k>();
 
 	uint64_t np = n - k;
 	result = np + 1;
@@ -152,6 +162,9 @@ inline bool fastbinomial(uint64_t& result)
 }
 
 // correct for n <= 100, k <= 10
+#if defined(__CUDACC__) || defined(__HIPCC__)
+__host__ __device__
+#endif
 inline bool fastbinomial(uint32_t n, uint32_t k, uint64_t& result)
 {
 	if (0 == k || n == k)
