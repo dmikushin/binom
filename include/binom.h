@@ -96,6 +96,41 @@ constexpr const int safen[] =
 } // namespace detail
 
 // correct for n <= 100, k <= 10
+template<
+	int n,
+	int k
+>
+inline bool fastbinomial(uint64_t& result)
+{
+	result = std::numeric_limits<uint64_t>::max();
+
+	if ((k <= 0) || (n <= 0))
+		return true;
+
+	if (k > 64)
+		return true;
+
+	if (n > detail::safen[k])
+		return true;
+
+	uint64_t np = n - k;
+	result = np + 1;
+	for (uint64_t z = 2; z <= (uint64_t)k; z++)
+	{
+		result =
+			result *
+			(np + z); // this could overflow! but it won't for our
+				  // range of values for n and k: require that n <= safen[k]
+
+		auto f = detail::precomputed[z];
+		result >>= f.shift;
+		result *= f.inverse;
+	}
+
+	return false;
+}
+
+// correct for n <= 100, k <= 10
 inline bool fastbinomial(int n, int k, uint64_t& result)
 {
 	result = std::numeric_limits<uint64_t>::max();
