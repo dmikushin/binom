@@ -1,7 +1,8 @@
 #include "binom.h"
 
 #include <stdio.h>
-#include <stdlib.h>
+
+#include "gtest/gtest.h"
 
 using namespace binom;
 using namespace binom::detail;
@@ -32,25 +33,17 @@ static bool test(int maxn, int maxk)
 	return true;
 }
 
-int main(int argc, char* argv[])
+TEST(binom, test)
 {
 	for (int k = 2; k <= 64; k++)
-	{
-		if (!test(safen[k], k))
-		{
-			printf("bug\n");
-			abort();
-		}
-	}
+		ASSERT_TRUE(test(safen[k], k));
 
-	if (!test(100, 10))
-	{
-		printf("bug\n");
-		abort();
-	}
+	ASSERT_TRUE(test(100, 10));
+}
 
-	printf("OK\n");
-
-	return EXIT_SUCCESS;
+int main(int argc, char ** argv)
+{
+	::testing::InitGoogleTest( & argc, argv);
+	return RUN_ALL_TESTS();
 }
 
