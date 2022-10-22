@@ -102,6 +102,24 @@ template<
 >
 inline bool fastbinomial(uint64_t& result)
 {
+	if (0 == k || n == k)
+	{
+		result = 1;
+		return false;
+	}
+
+	if (k > n)
+	{
+		result = 0;
+		return false;
+	}
+
+	if (1 == k)
+	{
+		result = n;
+		return false;
+	}
+
 	result = std::numeric_limits<uint64_t>::max();
 
 	if ((k <= 0) || (n <= 0))
@@ -112,6 +130,9 @@ inline bool fastbinomial(uint64_t& result)
 
 	if (n > detail::safen[k])
 		return true;
+
+	// Make k as small as possible.
+	if (k > n / 2) k = n - k;
 
 	uint64_t np = n - k;
 	result = np + 1;
@@ -133,6 +154,24 @@ inline bool fastbinomial(uint64_t& result)
 // correct for n <= 100, k <= 10
 inline bool fastbinomial(int n, int k, uint64_t& result)
 {
+	if (0 == k || n == k)
+	{
+		result = 1;
+		return false;
+	}
+
+	if (k > n)
+	{
+		result = 0;
+		return false;
+	}
+
+	if (1 == k)
+	{
+		result = n;
+		return false;
+	}
+
 	result = std::numeric_limits<uint64_t>::max();
 
 	if ((k <= 0) || (n <= 0))
@@ -143,6 +182,9 @@ inline bool fastbinomial(int n, int k, uint64_t& result)
 
 	if (n > detail::safen[k])
 		return true;
+
+	// Make k as small as possible.
+	if (k > n / 2) k = n - k;
 
 	uint64_t np = n - k;
 	result = np + 1;
