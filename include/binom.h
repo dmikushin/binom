@@ -199,6 +199,8 @@ inline bool fastbinomial(uint32_t n, uint32_t k, uint64_t& result)
 	if (n > detail::safen[k])
 		return true;
 
+	// XXX This code cannot efficiently execute in parallel threads on GPU,
+	// if "k" in each thread is different, due to the warp divergence.
 	uint64_t np = n - k;
 	result = np + 1;
 	for (uint64_t z = 2; z <= (uint64_t)k; z++)
