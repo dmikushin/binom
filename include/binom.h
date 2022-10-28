@@ -134,15 +134,15 @@ inline bool fastbinomial(uint64_t& result)
 	if ((k <= 0) || (n <= 0))
 		return true;
 
+	// Make k as small as possible.
+	if constexpr(k > n / 2)
+		return fastbinomial<n, n - k>();
+
 	if (k > 64)
 		return true;
 
 	if (n > detail::safen[k])
 		return true;
-
-	// Make k as small as possible.
-	if constexpr(k > n / 2)
-		return fastbinomial<n, n - k>();
 
 	uint64_t np = n - k;
 	result = np + 1;
@@ -190,14 +190,14 @@ inline bool fastbinomial(uint32_t n, uint32_t k, uint64_t& result)
 	if ((k <= 0) || (n <= 0))
 		return true;
 
+	// Make k as small as possible.
+	if (k > n / 2) k = n - k;
+
 	if (k > 64)
 		return true;
 
 	if (n > detail::safen[k])
 		return true;
-
-	// Make k as small as possible.
-	if (k > n / 2) k = n - k;
 
 	uint64_t np = n - k;
 	result = np + 1;
